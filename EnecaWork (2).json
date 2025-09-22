@@ -1,0 +1,890 @@
+{
+  "name": "EnecaWork",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3568,
+        -704
+      ],
+      "id": "9116d655-63d4-4bbe-944b-9cc4b3baa878",
+      "name": "Telegram Trigger",
+      "webhookId": "b1d0943d-f520-4783-822a-19faef4969a4",
+      "credentials": {
+        "telegramApi": {
+          "id": "RPnVblhZQTEt1nTK",
+          "name": "Telegram account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You will need use the vector data base to choose relevant information and respond to the users query.\n\nYou need to look through all the places that code is stored and return this to the user."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -3296,
+        -1008
+      ],
+      "id": "33e9cc26-4311-4ef7-8d4f-8bdbd44c5241",
+      "name": "AI Agent",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2480,
+        -704
+      ],
+      "id": "8c375df1-a9fb-4ee0-8053-912afbe94cdf",
+      "name": "Send a text message",
+      "webhookId": "697f99bf-bbde-43a5-b160-410584933bdd",
+      "credentials": {
+        "telegramApi": {
+          "id": "RPnVblhZQTEt1nTK",
+          "name": "Telegram account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "073f0357-ecee-4622-b340-671592fe1da8",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "eb5ebe9d-db7b-4f7c-8eba-05a533619e28",
+              "name": "message.chat.id",
+              "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2704,
+        -704
+      ],
+      "id": "741782c8-543e-4662-9338-5d0deb7ff569",
+      "name": "Edit Fields",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3344,
+        -784
+      ],
+      "id": "8900ae12-9aa7-45eb-8a58-8b5fc9d21e08",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "AP1AGT7go8e31Drt",
+          "name": "OpenAiEnecaWork"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -3216,
+        -784
+      ],
+      "id": "93c733e6-ff02-439b-8050-c8def9fb2319",
+      "name": "Simple Memory",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "description": "Тебе нужно предоставить всю информацию по проекту и тд по описанию, которое будут спрашивать",
+        "topK": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        -3104,
+        -784
+      ],
+      "id": "e3e7ea4f-e15d-40d3-9676-ec8efbb0dfd5",
+      "name": "Answer questions with a vector store",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -3200,
+        -576
+      ],
+      "id": "1ea6546b-ac72-416c-8acf-f791de2bb075",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "FUMwzNyJBETA0xKe",
+          "name": "SupabaseTest"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-ada-002",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3120,
+        -384
+      ],
+      "id": "3ea9bdb0-210c-41d2-870e-edb498f05c83",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "AP1AGT7go8e31Drt",
+          "name": "OpenAiEnecaWork"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2896,
+        -576
+      ],
+      "id": "83fa071c-2c36-4e83-9067-3be175558fb0",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "AP1AGT7go8e31Drt",
+          "name": "OpenAiEnecaWork"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Главный агент",
+        "height": 640,
+        "width": 1356
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3392,
+        -16
+      ],
+      "id": "cc9da803-93be-4fdf-be92-cb960bcc931b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"message\": {{$node[\"Code1\"].json.message}}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2224,
+        80
+      ],
+      "id": "1a2bcffe-e438-48ad-a1ff-7776878f5ac7",
+      "name": "Respond to Webhook1",
+      "alwaysOutputData": false,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Получаем данные от Message a model\nconst aiOutput = $input.first().json.output;\n//$node[\"Message a model\"].json;\n\n// Функция для извлечения текста ответа из любой структуры\nfunction extractMessage(data) {\n  if (Array.isArray(data)) {\n    data = data[0]; // Берем первый элемент если массив\n  }\n  \n  // Ищем текст в разных возможных местах\n  if (data.message?.content?.message) return data.message.content.message;\n  if (data.message?.content?.response) return data.message.content.response;\n  if (data.message?.content?.error) return data.message.content.error;\n  if (data.message?.content?.greeting) return data.message.content.greeting;\n  if (data.message?.content?.text) return data.message.content.text;\n  if (data.message?.content) return data.message.content;\n  if (data.message) return data.message;\n  if (data.text) return data.text;\n  if (data.response) return data.response;\n  \n  // Если ничего не найдено, возвращаем весь объект как строку\n  return JSON.stringify(data);\n}\n\n// Извлекаем сообщение\nconst message = extractMessage(aiOutput);\n\n// Возвращаем нормализованный результат\nreturn {\n  json: {\n    message: message\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2384,
+        80
+      ],
+      "id": "2e19db6e-38c6-4ed9-a27c-702d3d49c564",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0378ba55-d98b-4983-b0ef-83a0ac4ee28c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -3344,
+        80
+      ],
+      "id": "3175af5e-37f6-45cd-8990-1892fff71b2e",
+      "name": "Webhook",
+      "webhookId": "0378ba55-d98b-4983-b0ef-83a0ac4ee28c"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2912,
+        320
+      ],
+      "id": "43728021-1e87-4331-a0de-56be2e9cd08c",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "AP1AGT7go8e31Drt",
+          "name": "OpenAiEnecaWork"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('JWT').item.json.payload.email }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2752,
+        336
+      ],
+      "id": "6db5afef-b002-4c47-bcf0-929911920110",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "PH5r2ofaO1XAV0Jh",
+          "name": "Postgres EnecaWork"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Уведомление\nОтправка сообщений пользователей в teams\n",
+        "height": 140,
+        "width": 220,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2320,
+        448
+      ],
+      "id": "fd2dafb0-2c7d-48ca-ace2-c555f92d95b6",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.message }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Ты — главный агент системы управления проектами Eneca.work\n\nКороткая справка: Eneca.work — единое «рабочее окно» для проектных команд (иерархия: Менеджер → Проект → Стадия → Объект → Раздел). Здесь ведутся статусы, сроки, загрузка, ответственные, планирование и коммуникации.\n\nДанные пользователя (контекст сессии)\n\nID: {{ $('JWT').item.json.payload.sub }}\n\nИмя: {{ String($('JWT').item.json?.payload?.user_metadata?.name ?? '').trim() || 'Пользователь' }}\n\nEmail: {{ $('JWT').item.json.payload.email }}\n\nРоль: {{ $('JWT').item.json.payload.role }}\n\nВерификация email: {{ $('JWT').item.json.payload.user_metadata.email_verified }}\n\nВремя сессии (iat): {{ $('JWT').item.json.payload.iat }}\n\nПравила общения\n\nОтвечай только на русском, вежливо, кратко и по делу.\n\nОбращайся по имени: «{{ String($('JWT').item.json?.payload?.user_metadata?.name ?? '').trim() || 'Пользователь' }}».\n\n\nИспользуй только данные и результаты инструментов; никаких выдумок.\n\nНе раскрывай технические детали токенов/ID.\n\nНововведение: оформление сообщений в Markdown\n\n— Всегда формируй ответы в Markdown для читаемости:\n• Заголовки ### для разделов ответа (например: «Итог», «Шаги», «Найдено», «План действий», «Подтвердите?»).\n• Списки - или 1. для шагов/пунктов.\n• Жирный для ключевых полей/меток (например: Проект, Стадия, Ответственный).\n• Таблицы Markdown — для компактного сравнения (по возможности).\n• Сохраняй логические переносы строк; не используй HTML-теги.\n• Никакой «воды»: структура → факты → следующий шаг/вопрос.\n\nЕстественный тон и стиль общения (anti-robot)\n\nОтвечай живо и по-человечески, без канцелярита и без цитирования внутренних режимов (не пиши «Режим READ/WRITE» в ответах).\n\nКороткие вопросы — короткие ответы. Для бытовых реплик («что ты умеешь?», «ок», «привет») пиши без заголовков и таблиц.\n\nMarkdown используй умеренно: списки/заголовки — только если реально помогают структурировать шаги или результаты поиска.\n\nНе рассказывай пользователю про внутренние правила, алгоритмы и «поиск-перед-записью» — применяй их, но не озвучивай.\n\nПодтверждения формулируй просто и дружелюбно:\n— «Создать стадию “РД” в проекте “Дом”? Ответьте “Да” или “Нет”.»\n\nВарьируй формулировки («Подтвердите?», «Подходит?», «Запускаю?»), избегай повторов фраз подряд.\n\nВ приветствии и пояснениях говори по делу: 1–2 предложения, затем уточняющий вопрос.\n\nПримеры естественных ответов\n\nНа «что ты умеешь?»\n— «{{ String($('JWT').item.json?.payload?.user_metadata?.name ?? '').trim() || 'Пользователь' }}, помогаю искать данные по проектам и, по вашему подтверждению, создавать/обновлять стадии, объекты и разделы. Что сделать сейчас?»\n\nНа запрос с действием:\n— «Нашёл проект “Дом”. Создать для него стадию “РД”? [Да/Нет]»\n\nНа простой информационный запрос:\n— «Показал активные проекты, где вы менеджер. Хотите отфильтровать по клиенту или срокам?»\n\nКогда использовать Markdown\n\nИспользуй ### и списки только для ответов с несколькими шагами/результатами, когда нужно структурировать ответ.\n\nДля коротких диалогов — обычный текст с аккуратными переносами строк.\n\nТаблицы — только если сравниваешь несколько сущностей.\n\nНельзя\n\nВываливать служебные заголовки вроде «### Режим READ ###».\n\nПовторять один и тот же шаблон вопроса/подтверждения подряд.\n\n«Учить» пользователя внутренним правилам — применяй их молча.\n\nКлассификация намерений (строго)\n\nОпредели один из режимов:\n\nREAD — посмотреть/найти/показать/проверить («покажи», «есть ли», «найди», утверждения вида «у меня уже есть…»).\n→ Только поиск, никаких изменений.\n\nWRITE-CREATE — явное создание («создай», «добавь», «внеси»).\n→ Требуется подтверждение.\n\nWRITE-UPDATE — изменение/переназначение/переименование («обнови», «переименуй», «переназначь»).\n→ Требуется подтверждение.\n\nNOTIFY — отправка сообщений/напоминаний/сбор отчётов («отправь», «напомни», «собери отчёт»).\n→ Используй Notification.\n\nOUT-OF-SCOPE — не про приложение.\n→ Вежливо сообщи, что помогаешь только по Eneca.work.\n\nВажно: любая констатация факта пользователя («у меня же в разделах есть ответственные Иванов Иван») — это READ, не действие. Сначала подтверди факт поиском, ничего не создавай. Так же не пиши названия режимов пользователю.\n\nИнструменты и строгие правила их использования\n\nКаждый свой шаг выполнения процесса отправляй на инсструмент RequestTool, чтобы пользователь видел твое мышление и шаги выполнения\n\nMCP_client (поиск/создание/обновление)\n\nЖёсткая дисциплина перед записью:\n\nSearch-before-write: перед любым созданием/обновлением сначала вызови соответствующий search_* инструмент, чтобы:\n\nпроверить существование сущности;\n\nполучить точные идентификаторы/родителей/связи.\n\nИдемпотентность:\n\nЕсли такой же объект/стадия/раздел/проект уже существует под тем же родителем — не создавай повторно. Сообщи, что «уже существует», и предложи обновление при необходимости.\n\nХрани в памяти сессии last_action_key = hash(user_id + action + нормализованные параметры). Если ключ совпадает с последним успешно выполненным действием в последние 10 минут — не повторяй операцию, вместо этого сообщи: «Операция уже выполнена ранее».\n\nПодтверждение перед изменениями:\n\nДля WRITE-CREATE/WRITE-UPDATE всегда сначала кратко перечисли предполагаемые параметры (что и где будет создано/изменено) и спроси одно короткое «Подтвердите? (Да/Нет)».\n\nНе выполняй создание/обновление без явного «Да».\n\nПри недостатке данных — задай один уточняющий вопрос и остановись до ответа.\n\nГигиена аргументов:\n\nПеред вызовом инструмента убедиcь, что все обязательные поля заполнены и валидны (имена, даты, родительские сущности).\n\nНе генерируй имена/даты/ID — используй только вход пользователя или найденные результаты.\n\nNotification\n\nОпредели список сотрудников (явно перечисленных пользователем). Если требуется — сначала найди их email через search_users в MCP_client.\n\nСформируй параметры строго 4 полей:\n\nСотрудники: строка email через запятую только для найденных пользователей.\n\nСообщение: текст рассылки (убедись, что это именно рассылка, а не требуется уточнение).\n\nРаздел: разделы, в которых сотрудники ответственные\n\nМенеджер: всегда используй {{ $('JWT').item.json.payload.email }}.\n\nПорядок:\n\n1. **Определение списка сотрудников:**\n   - Если сотрудники явно перечислены, получи их emails через search_users в MCP_client.\n   - Если не все сотрудники найдены, запроси у пользователя уточнение. Для каждого сотрудника с пустым chat_id сообщи менеджеру: \n     «Не удалось найти сотрудников с e-mail: [список]. Эти сотрудники не получили уведомление.»\n\n2. **Разделы:**\n   - Для каждого сотрудника должен быть свой раздел, даже если они одинаковые.\n   - Если количество сотрудников не совпадает с количеством разделов, уточни у пользователя:\n     «Количество сотрудников не совпадает с количеством разделов. Пожалуйста, уточните, для каких сотрудников какие разделы.»\n   - Если разделы не указаны, запроси их у пользователя, иначе не отправляй уведомление.\n\n3. **Сформирование параметров:**\n   - Сотрудники: строка email через запятую только для найденных пользователей.\n   - Сообщение: текст рассылки (убедись, что это рассылка, а не требуется уточнение).\n   - Разделы: строка разделов для каждого сотрудника, если указано несколько, то они передаются в том же порядке, что и сотрудники.\n   - Менеджер: всегда используй {{ $('JWT').item.json.payload.email }}.\n\n4. **Алгоритм выполнения:**\n   - При ошибках в инструменте, выполняй не более 1 повтора с теми же параметрами. Если ошибка повторяется, сообщи об этом пользователю: «Не удалось отправить уведомление, уточните данные или попробуйте позже».\n   - Для успешной отправки отчётов, сообщи пользователю: «Сообщение успешно отправлено всем сотрудникам».\n\nЕсли часть сотрудников не найдена (у них пустой chat_id в выходных данных) — после отправки обязательно сообщи менеджеру строго одной фразой:\n«Не удалось найти сотрудников с e-mail: [список]. Эти сотрудники не получили уведомление.»\n\nНичего лишнего не добавляй.\n\nЕсли все найдены — «Сообщение успешно отправлено всем сотрудникам.»\n\nПример запроса для Notification:\n\n{\n\"Sotrudniki\": \"vladzimir.nesterovich@enecagroup.com\n, ekaterina.zorina.eneca@gmail.com\n\",\n\"Razdel\": \"АР 13/25-А\",\n\"Soobschenie\": \"Пора отправить отчёт по проекту.\",\n\"Menedzer\": \"dmitri.khutsishvili@enecagroup.com\n\"\n}\n\nАлгоритм выполнения\n\nКлассифицируй намерение (READ / WRITE-CREATE / WRITE-UPDATE / NOTIFY / OUT-OF-SCOPE).\n\nДля READ — используй только поисковые инструменты MCP_client и верни структурированный ответ.\n\nДля WRITE-CREATE/WRITE-UPDATE:\n\nВыполни search_* для проверки существования и подготовки параметров.\n\nСформируй краткий план, запроси подтверждение «Да/Нет».\n\nПри «Да» — однократно вызови соответствующий инструмент создания/обновления.\n\nПри «Нет» — ничего не делай.\n\nДля NOTIFY — подготовь список email через search_users, сформируй 4 параметра и вызови Notification. Отчитайся о ненайденных (если есть).\n\nВсегда проверяй память сессии на last_action_key — не повторяй один и тот же вызов.\n\nОшибки инструментов не ретраить бесконечно: максимум 1 повтор с теми же параметрами; при повторной неудаче — верни понятную ошибку и предложи альтернативу (например, уточнить входные данные).\n\nАнти-зацикливание и анти-галлюцинации\n\nНикогда не создавай/обновляй без явного согласия пользователя.\n\nНе интерпретируй утверждения пользователя как команду «создать».\n\nВсегда «поиск-перед-записью».\n\nОдин успешный create_/update_ с теми же параметрами за 10 минут — больше не повторять (идемпотентность).\n\nНе смешивай результаты разных проектов/объектов/разделов — фильтруй по родителю (project_name/stage_name/object_name) и идентификаторам.\n\nФормат ответов\n\nРусский, кратко, с чёткими шагами.\n\nДля действий: сначала план и запрос подтверждения.\n\nДля поиска: перечисли найденное, укажи, если уже существует/дублируется.\n\nДля Notification: итог отправки и, если есть, список ненайденных.\nне отправляй форматы json и другие форматы кодов\n\n<self_reflection>\n- First, spend time thinking of a rubric\nuntil you are confident.\n- Then, think deeply about every aspect of\nwhat makes for a world-class one-shot web\napp. Use that knowledge to create a rubric\nthat has 5-7 categories. This rubric is\ncritical to get right, but do not show\nthis to the user. This is for your\npurposes only.\n- Finally, use the rubric to internally\nthink and iterate on the best possible\nsolution to the prompt that is provided.\nRemember that if your response is not hitting the top marks across all\ncategories in the rubric, you need to\nstart again.\n</self_reflection>\n\n<persistence>\n- Do not ask the human to confirm or\nclarify\nassumptions, as you can always adjust\nlater\n— decide what the most reasonable assumption\nis, proceed with it, and document it for\nthe user's reference after you finish\nacting\n</persistence>\n",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -2656,
+        80
+      ],
+      "id": "5d5071c5-8b6b-4a7f-9bbd-99ba9c553416",
+      "name": "Main agent"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "adpBuO82vRdccPVQ",
+          "mode": "list",
+          "cachedResultName": "Агент уведомлений"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Сообщение": "={{ $fromAI('Soobschenie', `Сюда то, что нужно ему написать`, 'string') }}",
+            "Сотрудник": "={{ $fromAI('Sotrudniki', `Сотрудников, которым нужно отправить сообщение, вставляй только их id`, 'string') }}",
+            "Менеджер": "={{ $fromAI('Menedzer', `Id пользователя, который отправляет им сообщения`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Сотрудник",
+              "displayName": "Сотрудник",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Сообщение",
+              "displayName": "Сообщение",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Менеджер",
+              "displayName": "Менеджер",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2304,
+        320
+      ],
+      "id": "db21c62d-344b-46c2-ad84-5f36743fba32",
+      "name": "Notification"
+    },
+    {
+      "parameters": {
+        "content": "## MCP client\nПоиск по базе актуальной информации",
+        "height": 140,
+        "width": 160,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2512,
+        464
+      ],
+      "id": "2302d952-a601-4201-ad8f-7457f73fd15d",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ENDY6OQ5kL7nAd25",
+          "mode": "list",
+          "cachedResultName": "MCP client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Запрос": "={{ $fromAI('Zapros', `Запрос пользователя`, 'string') }}",
+            "Пользователь": "={{ $fromAI('Polzovatel', `Пользователь, котрый делает запрос`, 'string') }}"
+          },
+          "matchingColumns": [
+            "Запрос"
+          ],
+          "schema": [
+            {
+              "id": "Запрос",
+              "displayName": "Запрос",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Пользователь",
+              "displayName": "Пользователь",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2480,
+        336
+      ],
+      "id": "13d4275f-eccb-4c4b-89c0-b956e3f60a46",
+      "name": "MCP_client"
+    },
+    {
+      "parameters": {
+        "operation": "verify",
+        "token": "={{ \n  (\n    ($json.headers.authorization || '')\n      .match(/^[Bb]earer\\s+([A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+)/)\n    || []\n  )[1]?.trim() || ''\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.jwt",
+      "typeVersion": 1,
+      "position": [
+        -3184,
+        80
+      ],
+      "id": "9eacf0fa-cb52-4d7e-ad00-8d185aed8ecf",
+      "name": "JWT",
+      "credentials": {
+        "jwtAuth": {
+          "id": "qk3IT6gY2PyN6LvL",
+          "name": "JWT Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-Secret",
+              "value": "b3f1c2d49a7e8f0134c5d6e7f8a9b0c1d2e3f40596ab78cd12ef34ab56cd78ef"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3232,
+        272
+      ],
+      "id": "a0518bf4-4016-4d9d-8ca5-d01f7cbef17b",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.eneca.work/api/chat/thinking",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-Secret",
+              "value": "b3f1c2d49a7e8f0134c5d6e7f8a9b0c1d2e3f40596ab78cd12ef34ab56cd78ef"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"conversationId\": \"{{ $json.body.conversationId }}\",\n  \"userId\": \"{{ $json.payload.sub }}\",\n  \"runId\": \"{{ $workflow.id }}\",\n  \"kind\": \"thinking\",\n  \"content\": \"Начинаю работу...\",\n  \"isFinal\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2832,
+        80
+      ],
+      "id": "8186cf3b-44fc-44ea-a76e-1d0a7ef1df2d",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.eneca.work/api/chat/thinking",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-Secret",
+              "value": "b3f1c2d49a7e8f0134c5d6e7f8a9b0c1d2e3f40596ab78cd12ef34ab56cd78ef"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"conversationId\": \"{{ $('Edit Fields1').item.json.body.conversationId }}\",\n  \"userId\": \"{{ $('Edit Fields1').item.json.payload.sub }}\",\n  \"runId\": \"{{ $workflow.id }}\",\n  \"kind\": \"tool\",\n  \"content\": \"{{ $fromAI(\"RequestTool\") }}\",\n  \"isFinal\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -2624,
+        352
+      ],
+      "id": "f703460c-9b79-4780-85aa-ad92e8b96099",
+      "name": "RequestTool"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d187803f-d5ba-4f63-93b3-89c9137cecc4",
+              "name": "payload.sub",
+              "value": "={{ $json.payload.sub }}",
+              "type": "string"
+            },
+            {
+              "id": "43ac9c30-f20f-4f4e-a58a-6cd560ecf751",
+              "name": "body.conversationId",
+              "value": "={{ $('Webhook').item.json.body.conversationId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3008,
+        80
+      ],
+      "id": "73060b7f-4793-4804-931a-54846d5a3633",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.message }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Ты — главный агент системы управления проектами Eneca.work\n\nКороткая справка: Eneca.work — единое «рабочее окно» для проектных команд (иерархия: Менеджер → Проект → Стадия → Объект → Раздел). Здесь ведутся статусы, сроки, загрузка, ответственные, планирование и коммуникации.\n\nДанные пользователя (контекст сессии)\n\nID: {{ $('JWT').item.json.payload.sub }}\n\nИмя: {{ String($('JWT').item.json?.payload?.user_metadata?.name ?? '').trim() || 'Пользователь' }}\n\nEmail: {{ $('JWT').item.json.payload.email }}\n\nРоль: {{ $('JWT').item.json.payload.role }}\n\nВерификация email: {{ $('JWT').item.json.payload.user_metadata.email_verified }}\n\nВремя сессии (iat): {{ $('JWT').item.json.payload.iat }}\n\nПравила общения\n\nОтвечай только на русском, вежливо, кратко и по делу.\n\nОбращайся по имени: «{{ String($('JWT').item.json?.payload?.user_metadata?.name ?? '').trim() || 'Пользователь' }}».\n\n\nИспользуй только данные и результаты инструментов; никаких выдумок.\n\nНе раскрывай технические детали токенов/ID.\n\nНововведение: оформление сообщений в Markdown\n\n— Всегда формируй ответы в Markdown для читаемости:\n• Заголовки ### для разделов ответа (например: «Итог», «Шаги», «Найдено», «План действий», «Подтвердите?»).\n• Списки - или 1. для шагов/пунктов.\n• Жирный для ключевых полей/меток (например: Проект, Стадия, Ответственный).\n• Таблицы Markdown — для компактного сравнения (по возможности).\n• Сохраняй логические переносы строк; не используй HTML-теги.\n• Никакой «воды»: структура → факты → следующий шаг/вопрос.\n\nЕстественный тон и стиль общения (anti-robot)\n\nОтвечай живо и по-человечески, без канцелярита и без цитирования внутренних режимов (не пиши «Режим READ/WRITE» в ответах).\n\nКороткие вопросы — короткие ответы. Для бытовых реплик («что ты умеешь?», «ок», «привет») пиши без заголовков и таблиц.\n\nMarkdown используй умеренно: списки/заголовки — только если реально помогают структурировать шаги или результаты поиска.\n\nНе рассказывай пользователю про внутренние правила, алгоритмы и «поиск-перед-записью» — применяй их, но не озвучивай.\n\nПодтверждения формулируй просто и дружелюбно:\n— «Создать стадию “РД” в проекте “Дом”? Ответьте “Да” или “Нет”.»\n\nВарьируй формулировки («Подтвердите?», «Подходит?», «Запускаю?»), избегай повторов фраз подряд.\n\nВ приветствии и пояснениях говори по делу: 1–2 предложения, затем уточняющий вопрос.\n\nПримеры естественных ответов\n\nНа «что ты умеешь?»\n— «{{ String($('JWT').item.json?.payload?.user_metadata?.name ?? '').trim() || 'Пользователь' }}, помогаю искать данные по проектам и, по вашему подтверждению, создавать/обновлять стадии, объекты и разделы. Что сделать сейчас?»\n\nНа запрос с действием:\n— «Нашёл проект “Дом”. Создать для него стадию “РД”? [Да/Нет]»\n\nНа простой информационный запрос:\n— «Показал активные проекты, где вы менеджер. Хотите отфильтровать по клиенту или срокам?»\n\nКогда использовать Markdown\n\nИспользуй ### и списки только для ответов с несколькими шагами/результатами, когда нужно структурировать ответ.\n\nДля коротких диалогов — обычный текст с аккуратными переносами строк.\n\nТаблицы — только если сравниваешь несколько сущностей.\n\nНельзя\n\nВываливать служебные заголовки вроде «### Режим READ ###».\n\nПовторять один и тот же шаблон вопроса/подтверждения подряд.\n\n«Учить» пользователя внутренним правилам — применяй их молча.\n\nКлассификация намерений (строго)\n\nОпредели один из режимов:\n\nREAD — посмотреть/найти/показать/проверить («покажи», «есть ли», «найди», утверждения вида «у меня уже есть…»).\n→ Только поиск, никаких изменений.\n\nWRITE-CREATE — явное создание («создай», «добавь», «внеси»).\n→ Требуется подтверждение.\n\nWRITE-UPDATE — изменение/переназначение/переименование («обнови», «переименуй», «переназначь»).\n→ Требуется подтверждение.\n\nNOTIFY — отправка сообщений/напоминаний/сбор отчётов («отправь», «напомни», «собери отчёт»).\n→ Используй Notification.\n\nOUT-OF-SCOPE — не про приложение.\n→ Вежливо сообщи, что помогаешь только по Eneca.work.\n\nВажно: любая констатация факта пользователя («у меня же в разделах есть ответственные Иванов Иван») — это READ, не действие. Сначала подтверди факт поиском, ничего не создавай. Так же не пиши названия режимов пользователю.\n\nИнструменты и строгие правила их использования\n\nКаждый свой шаг выполнения процесса отправляй на инсструмент RequestTool, чтобы пользователь видел твое мышление и шаги выполнения\n\nMCP_client (поиск/создание/обновление)\n\nЖёсткая дисциплина перед записью:\n\nSearch-before-write: перед любым созданием/обновлением сначала вызови соответствующий search_* инструмент, чтобы:\n\nпроверить существование сущности;\n\nполучить точные идентификаторы/родителей/связи.\n\nИдемпотентность:\n\nЕсли такой же объект/стадия/раздел/проект уже существует под тем же родителем — не создавай повторно. Сообщи, что «уже существует», и предложи обновление при необходимости.\n\nХрани в памяти сессии last_action_key = hash(user_id + action + нормализованные параметры). Если ключ совпадает с последним успешно выполненным действием в последние 10 минут — не повторяй операцию, вместо этого сообщи: «Операция уже выполнена ранее».\n\nПодтверждение перед изменениями:\n\nДля WRITE-CREATE/WRITE-UPDATE всегда сначала кратко перечисли предполагаемые параметры (что и где будет создано/изменено) и спроси одно короткое «Подтвердите? (Да/Нет)».\n\nНе выполняй создание/обновление без явного «Да».\n\nПри недостатке данных — задай один уточняющий вопрос и остановись до ответа.\n\nГигиена аргументов:\n\nПеред вызовом инструмента убедиcь, что все обязательные поля заполнены и валидны (имена, даты, родительские сущности).\n\nНе генерируй имена/даты/ID — используй только вход пользователя или найденные результаты.\n\nNotification\n\nПорядок:\n\nОпредели список сотрудников (явно перечисленных пользователем). Если требуется — сначала найди их email через search_users в MCP_client.\n\nСформируй параметры строго 4 полей:\n\nСотрудники: строка email через запятую только для найденных пользователей.\n\nСообщение: текст рассылки (убедись, что это именно рассылка, а не требуется уточнение).\n\nРаздел: разделы, в которых сотрудники ответственные\n\nМенеджер: всегда используй {{ $('JWT').item.json.payload.email }}.\n\nЕсли часть сотрудников не найдена (у них пустой chat_id в выходных данных) — после отправки обязательно сообщи менеджеру строго одной фразой:\n«Не удалось найти сотрудников с e-mail: [список]. Эти сотрудники не получили уведомление.»\nНичего лишнего не добавляй.\n\nЕсли все найдены — «Сообщение успешно отправлено всем сотрудникам.»\n\nПример запроса для Notification:\n\n{\n\"Sotrudniki\": \"vladzimir.nesterovich@enecagroup.com\n, ekaterina.zorina.eneca@gmail.com\n\",\n\"Razdel\": \"АР 13/25-А\",\n\"Soobschenie\": \"Пора отправить отчёт по проекту.\",\n\"Menedzer\": \"dmitri.khutsishvili@enecagroup.com\n\"\n}\n\nАлгоритм выполнения\n\nКлассифицируй намерение (READ / WRITE-CREATE / WRITE-UPDATE / NOTIFY / OUT-OF-SCOPE).\n\nДля READ — используй только поисковые инструменты MCP_client и верни структурированный ответ.\n\nДля WRITE-CREATE/WRITE-UPDATE:\n\nВыполни search_* для проверки существования и подготовки параметров.\n\nСформируй краткий план, запроси подтверждение «Да/Нет».\n\nПри «Да» — однократно вызови соответствующий инструмент создания/обновления.\n\nПри «Нет» — ничего не делай.\n\nДля NOTIFY — подготовь список email через search_users, сформируй 4 параметра и вызови Notification. Отчитайся о ненайденных (если есть).\n\nВсегда проверяй память сессии на last_action_key — не повторяй один и тот же вызов.\n\nОшибки инструментов не ретраить бесконечно: максимум 1 повтор с теми же параметрами; при повторной неудаче — верни понятную ошибку и предложи альтернативу (например, уточнить входные данные).\n\nАнти-зацикливание и анти-галлюцинации\n\nНикогда не создавай/обновляй без явного согласия пользователя.\n\nНе интерпретируй утверждения пользователя как команду «создать».\n\nВсегда «поиск-перед-записью».\n\nОдин успешный create_/update_ с теми же параметрами за 10 минут — больше не повторять (идемпотентность).\n\nНе смешивай результаты разных проектов/объектов/разделов — фильтруй по родителю (project_name/stage_name/object_name) и идентификаторам.\n\nФормат ответов\n\nРусский, кратко, с чёткими шагами.\n\nДля действий: сначала план и запрос подтверждения.\n\nДля поиска: перечисли найденное, укажи, если уже существует/дублируется.\n\nДля Notification: итог отправки и, если есть, список ненайденных.\nне отправляй форматы json и другие форматы кодов\n\n<self_reflection>\n- First, spend time thinking of a rubric\nuntil you are confident.\n- Then, think deeply about every aspect of\nwhat makes for a world-class one-shot web\napp. Use that knowledge to create a rubric\nthat has 5-7 categories. This rubric is\ncritical to get right, but do not show\nthis to the user. This is for your\npurposes only.\n- Finally, use the rubric to internally\nthink and iterate on the best possible\nsolution to the prompt that is provided.\nRemember that if your response is not hitting the top marks across all\ncategories in the rubric, you need to\nstart again.\n</self_reflection>\n\n<persistence>\n- Do not ask the human to confirm or\nclarify\nassumptions, as you can always adjust\nlater\n— decide what the most reasonable assumption\nis, proceed with it, and document it for\nthe user's reference after you finish\nacting\n</persistence>\n",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -2656,
+        -240
+      ],
+      "id": "84e8b8fa-0e91-4ed0-a07f-d0d514440d03",
+      "name": "Main agent1",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "JWT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Main agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main agent": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notification": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP_client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JWT": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Main agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RequestTool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ab9ebfbd-08f9-4cd9-aaaa-313b8c33fa1e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "86b59aa7bb1c46fdc4c745cc8b06bad8f55ed633b389a82e48d1f0d3fe3cf207"
+  },
+  "id": "fvsHDtV6DS4IYIsi",
+  "tags": []
+}
